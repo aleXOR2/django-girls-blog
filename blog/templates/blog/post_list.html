@@ -1,20 +1,11 @@
-<html>
-<body>
-    <div>
-        <h1><a href="/"></a>My Buggy Blog<</a></h1>
-    </div> 
+{% extends 'blog/base.html' %}
+
+{% block content %}
     {% for post in posts %}
-        <div>
-            <p>published: {{ post.published_date }}</p>
+        <div class="post">
             <h2><a href="">{{ post.title }}</a></h2>
+            <div class="date"><p>published: {{ post.published_date }}</p></div>
             <p>{{ post.text|linebreaksbr }}</p>
         </div>
     {% endfor %}
-    <h3>Dates post made on</h3>
-    <ul style="border-style: solid;">
-        {% for date_post_made in dates_posts_made %}
-        <li>{{ date_post_made.isoformat }}</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% endblock %}
