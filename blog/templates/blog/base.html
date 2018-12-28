@@ -9,8 +9,45 @@
     </head>
     <body>
         <div class="page-header">
-            <h1><a href="/">{{ app_name }}</a></h1>
+            <h1 style="display: inline"><a href="/">
+                {{ request.resolver_match.app_name }}
+            </a></h1>
+            {% if user.is_authenticated %}
+                <a href="{% url 'blog:post_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
+                <a href="{% url 'blog:post_draft_list' %}" class="top-menu"><span class="glyphicon glyphicon-edit"></span></a>
+                <p class="top-menu">Hello {{ user.username }} <small>(<a href="{% url 'logout' %}">Log out</a>)</small></p>
+            {% else %}
+                <a href="{% url 'login' %}" class="top-menu"><span class="glyphicon glyphicon-lock"></span></a>
+            {% endif %}
         </div>
+        {% if user.is_authenticated %}
+            {% block post_drafts_wrapper %}
+                <div>
+                    <h3>Posts drafts</h3>
+                    <ul style="border-style: solid;">
+                    {% for post in post_drafts %}
+                        {% if not post.published_date %}
+                                <li><a href="{% url 'blog:post_detail' pk=post.pk %}">{{ post.title }}</a></li>
+                            <ul>
+                                <li>created: {{ post.created_date|date:'d-m-Y' }} {{ post.created_date|time:'H:i' }}</li>
+                            </ul>
+                        {% endif %}
+                    {% endfor %}
+                    {% comment %}
+                    TODO: add view for post_drafts
+                    {% endcomment %}
+                </ul>
+                </div>
+                <div>
+                    <h3>Dates post published on</h3>
+                    <ul style="border-style: solid;">
+                        {% for date_post_made in dates_posts_made %}
+                            <li>{{ date_post_made.isoformat }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endblock post_drafts_wrapper %}
+        {% endif %}
         <div class="content container">
             <div class="row">
                 <div class="col-md-8">
@@ -18,14 +55,6 @@
                     {% endblock %}
                 </div>
             </div>
-        </div>
-        <h3>Dates post made on</h3>
-        <div>
-            <ul style="border-style: solid;">
-                {% for date_post_made in dates_posts_made %}
-                    <li>{{ date_post_made.isoformat }}</li>
-                {% endfor %}
-            </ul>
         </div>
      </body>
 </html>
